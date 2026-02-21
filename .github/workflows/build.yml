@@ -27,7 +27,7 @@ jobs:
           ${{ github.workspace }}/src-materials
     - run: pip install -r requirements.txt
     - run: |
-        lazurite build ./proj -p merged -v --no-zip
+        lazurite build ./proj -p merged
     - uses: actions/upload-artifact@v4
       with:
         name: fullbright
