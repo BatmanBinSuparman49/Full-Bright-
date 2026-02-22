@@ -26,11 +26,17 @@ jobs:
         path: |
           ${{ github.workspace }}/src-materials
     - run: pip install -r requirements.txt
-    - run: |
-        lazurite build ./proj -p merged
+    - run: lazurite build ./proj -p merged
+
+    - name: Prepare Artifact Folder
+      shell: pwsh
+      run: |
+        New-Item -Path "Build" -ItemType Directory
+        Copy-Item -Path "./proj/*" -Destination "Build" -Recurse -Force
+
     - uses: actions/upload-artifact@v4
       with:
         name: fullbright
-        path: ${{github.workspace}}
+        path: Build/
 
 
