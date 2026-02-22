@@ -4,39 +4,39 @@ on:
   workflow_dispatch:
     inputs:
       platform:
-        description: "platform"
+        description: "Select Platform"
         required: true
-        default: "Merged"
+        default: "merged"
         type: choice
         options:
-        - Merged
+        - merged
+        - windows
+        - android
+        - ios
 
 jobs:
-  merged:
-    runs-on: Windows-2022 
+  build_job:
+    runs-on: windows-latest # Batches need Windows
     steps: 
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with: 
         python-version: '3.11'
         cache: 'pip'
-    - uses: actions/cache@v4 
+
+    - name: Install Lazurite
+      run: pip install lazurite
+
+    - name: Execute Local Build Script
+      # This calls your .bat and passes the 'platform' choice as %1
+      run: .\build.bat ${{ github.event.inputs.platform }}
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
       with:
-        key: env-files-win-laz
-        path: |
-          ${{ github.workspace }}/src-materials
-    - run: pip install -r requirements.txt
-    - run: lazurite build ./proj -p merged
-
-    - name: Prepare Artifact Folder
-      shell: pwsh
-      run: |
-        New-Item -Path "Build" -ItemType Directory
-        Copy-Item -Path "./proj/*" -Destination "Build" -Recurse -Force
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: fullbright
-        path: Build/
-
-
+        name: fullbright-${{ github.event.inputs.platform }}
+        # Since your .bat moves files to build/%PLATFORM%, we grab that folder
+        path: build/${{ github.event.inputs.platform }}/

@@ -1,9 +1,10 @@
 {
   "base_profile": {
     "platforms": ["ESSL_300"],
-    "merge_source": ["../src-materials"],
+    "merge_source": ["../src-merge"],
+    "include_patterns": ["RenderChunk", "Actor", "ItemInHandTextured", "ItemInHandColor", "ItemInHandColorGlint"],
     "exclude_patterns": [".*", "_*"],
-    "include_search_paths": ["../proj", "../include"]
+    "include_search_paths": ["../src", "../include"]
   },
   "profiles": {
     "android": {
